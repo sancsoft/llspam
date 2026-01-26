@@ -15,11 +15,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapPost("/formscore", async (Dictionary<string, string> data) =>
+app.MapPost("/formscore", async ([Microsoft.AspNetCore.Mvc.FromHeader(Name = "X-Api-Key")] string? userApiKey, Dictionary<string, string> data) =>
 {
     string prompt = "On a scale from 1 to 10 what is the likelihood that the following form submission is spam with 1 being least likely spam and 10 being most likely spam. Answer only with a number 1 to 10.\n";
     SpamRating[] spamGrading = {
-        SpamRating.Failed, 
+        SpamRating.Failed,
         SpamRating.Not_Spam, SpamRating.Not_Spam, SpamRating.Not_Spam,              // 1-3
         SpamRating.Not_Likely_Spam, SpamRating.Not_Likely_Spam,                     // 4-5
         SpamRating.Likely_Spam, SpamRating.Likely_Spam, SpamRating.Likely_Spam,     // 6-8
@@ -27,6 +27,23 @@ app.MapPost("/formscore", async (Dictionary<string, string> data) =>
     };
 
     int spamGrade = 0;
+
+    // get the available API keys and make a list
+    string[] apiKeyArray = File.ReadAllLines("apikeys.txt");
+    List<string> apiKeyList = new List<string>();
+    foreach (string apiKey in apiKeyArray)
+    {
+        if (apiKey.Length >= 36)
+        {
+            apiKeyList.Add(apiKey.Substring(0, 36));
+        }
+    }
+
+    // get the api key from the header provided
+    if (!apiKeyList.Contains(userApiKey ?? ""))
+    {
+        return Results.Unauthorized();
+    }
 
     // build a message containing the form fields provided as a dictionary
     string formContent = "";
