@@ -35,7 +35,8 @@ ScaffoldingReadMe.txt
 *.nupkg
 # NuGet Symbol Packages
 *.snupkg
-
+# VisualStudio 2026
+.vs
 # Others
 ~$*
 *~
@@ -52,3 +53,5 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+*.user
