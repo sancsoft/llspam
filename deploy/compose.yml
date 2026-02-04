@@ -1,0 +1,10 @@
+services:
+  llspam:
+    image: ghcr.io/sancsoft/llspam:v0.0.2
+    ports:
+    - "${LLSPAM_PORT:-80}:80"
+    volumes:
+      - ./apikeys.txt:/app/apikeys.txt:ro
+    restart: unless-stopped
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
